@@ -3,6 +3,7 @@
 (function (root) {
   const BC = root.BayCopier || (root.BayCopier = {});
 
+  BC.REPO = "codyparham94/baycopier";
   BC.MAX_PHOTOS = 24;
   BC.JOB_TTL_MS = 30 * 60 * 1000;
 
@@ -50,6 +51,18 @@
       if (out.length === BC.MAX_PHOTOS) break;
     }
     return out;
+  };
+
+  // Compares "1.2.10" with "v1.2.9": >0 if a is newer, <0 if older, 0 if equal.
+  BC.compareVersions = function (a, b) {
+    const parts = (v) => String(v).replace(/^v/i, "").split(".").map((n) => parseInt(n, 10) || 0);
+    const pa = parts(a);
+    const pb = parts(b);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+      const d = (pa[i] || 0) - (pb[i] || 0);
+      if (d) return d;
+    }
+    return 0;
   };
 
   // Polls fn() until it returns something truthy or the timeout passes.

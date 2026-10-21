@@ -20,14 +20,28 @@ Supported sites: ebay.com, ebay.co.uk, ebay.ca, ebay.com.au.
 > responsible for what you list. Use it on your own listings, or with the
 > owner's permission, or replace the copied content before listing.
 
-## Install (temporary, for development)
+## Install
 
-1. Download or clone this repo.
+1. Download `baycopier-vX.Y.Z.zip` from the
+   [latest release](https://github.com/codyparham94/baycopier/releases/latest).
 2. In Firefox, open `about:debugging#/runtime/this-firefox`.
-3. Click **Load Temporary Add-on…** and pick `extension/manifest.json`.
+3. Click **Load Temporary Add-on…** and pick the downloaded `.zip`.
+   (From a clone of the repo, pick `extension/manifest.json` instead.)
 
 Temporary add-ons are removed when Firefox restarts; repeat step 3 after a
 restart. Requires Firefox 142 or newer.
+
+## Updates
+
+BayCopier checks this repo's latest GitHub release when Firefox starts and
+every 12 hours. When a newer version is out, the toolbar icon shows **NEW**,
+Firefox shows a notification once, and the settings page has a **Download**
+button and a **Check now** button.
+
+Firefox can't swap out a temporarily loaded add-on by itself, so to update:
+download the new `.zip` and **Load Temporary Add-on…** with it. It has the
+same add-on ID, so it replaces the loaded version. Don't click **Remove**
+first; removing an add-on can erase its saved settings.
 
 If BayCopier's settings page shows **Grant access to eBay**, click it. Firefox
 asks for site access once.
@@ -95,6 +109,20 @@ npm test       # unit tests on HTML fixtures
 npm run lint   # web-ext lint
 npm start      # launch a fresh Firefox with the extension loaded
 ```
+
+### Releasing
+
+1. Bump `version` in `extension/manifest.json` and `package.json`.
+2. Commit, then tag and push:
+
+   ```bash
+   git tag v0.3.0 && git push origin main v0.3.0
+   ```
+
+The [Release workflow](.github/workflows/release.yml) runs the tests and lint,
+builds `baycopier-v0.3.0.zip` and publishes it as a GitHub release, which
+installed copies then pick up. It fails if the tag doesn't match the manifest
+version.
 
 The fixtures in `test/fixtures/` are hand-built to match eBay's markup. eBay
 blocks automated page fetches, so they are not captured from live pages. If

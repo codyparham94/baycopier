@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
   "name": "BayCopier",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Copy an eBay sold listing's description and photos into a new listing via \"Sell one like this\".",
   "icons": {
     "48": "icons/icon.svg",
     "96": "icons/icon.svg"
   },
-  "permissions": ["storage", "downloads"],
+  "permissions": ["storage", "downloads", "alarms", "notifications"],
   "host_permissions": [
     "*://*.ebay.com/*",
     "*://*.ebay.co.uk/*",
@@ -15,10 +15,11 @@
     "*://*.ebay.com.au/*",
     "*://*.ebaydesc.com/*",
     "*://i.ebayimg.com/*",
-    "https://api.ebay.com/*"
+    "https://api.ebay.com/*",
+    "https://api.github.com/*"
   ],
   "background": {
-    "scripts": ["lib/common.js", "lib/item-page.js", "lib/ebay-api.js", "background.js"]
+    "scripts": ["lib/common.js", "lib/item-page.js", "lib/ebay-api.js", "lib/updates.js", "background.js"]
   },
   "content_scripts": [
     {

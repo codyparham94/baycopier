@@ -15,6 +15,20 @@
         <button id="grant" type="button">Grant access to eBay</button>
       </section>
 
+      <section id="updates">
+        <h2>Updates</h2>
+        <p id="update-text">Version <span id="current-version"></span></p>
+        <div class="row">
+          <a id="download" class="button" hidden>Download</a>
+          <button id="check" type="button" class="secondary">Check now</button>
+        </div>
+        <p class="note" id="update-help" hidden>
+          After downloading, open <code>about:debugging#/runtime/this-firefox</code>, click
+          <b>Load Temporary Add-on…</b> and pick the downloaded <code>.zip</code>. It replaces this version — don't click
+          Remove first.
+        </p>
+      </section>
+
       <section>
         <h2>eBay API keys <span class="optional">optional</span></h2>
         <p>

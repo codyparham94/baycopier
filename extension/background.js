@@ -97,6 +97,8 @@ const handlers = {
   },
 
   testApi: ({ clientId, clientSecret }) => BC.EbayApi.test({ clientId, clientSecret }),
+
+  checkUpdates: () => BC.Updates.check(),
 };
 
 browser.runtime.onMessage.addListener((msg) => {
@@ -105,3 +107,18 @@ browser.runtime.onMessage.addListener((msg) => {
 });
 
 browser.action.onClicked.addListener(() => browser.runtime.openOptionsPage());
+
+// Update checks: shortly after startup, then every 12 hours.
+const UPDATE_ALARM = "update-check";
+const checkUpdatesQuietly = () => BC.Updates.check().catch((e) => console.warn("BayCopier update check failed:", e));
+
+browser.alarms.get(UPDATE_ALARM).then((alarm) => {
+  if (!alarm) browser.alarms.create(UPDATE_ALARM, { delayInMinutes: 1, periodInMinutes: 12 * 60 });
+});
+browser.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === UPDATE_ALARM) checkUpdatesQuietly();
+});
+browser.runtime.onStartup.addListener(checkUpdatesQuietly);
+browser.notifications.onClicked.addListener((id) => {
+  if (id === BC.Updates.NOTIFICATION_ID) browser.runtime.openOptionsPage();
+});

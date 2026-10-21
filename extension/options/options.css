@@ -66,6 +66,17 @@ button {
   font: 600 14px system-ui, sans-serif;
   cursor: pointer;
 }
+a.button {
+  display: inline-block;
+  padding: 7px 16px;
+  border-radius: 18px;
+  background: var(--accent);
+  color: #fff;
+  font: 600 14px system-ui, sans-serif;
+  text-decoration: none;
+}
+#updates.available { border-color: var(--accent); }
+code { font-size: 12px; }
 button.secondary { background: transparent; color: var(--accent); }
 button:disabled { opacity: 0.6; cursor: default; }
 #status { min-height: 1.5em; margin: 10px 0 0; }
