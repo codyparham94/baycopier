@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <head><script>window.tracker = 1;</script></head>
+  <body>
+    <div id="ds_div">
+      <style>.spec{color:#333}</style>
+      <h2 onclick="steal()">Vintage Camera</h2>
+      <table class="spec"><tr><td>Lens</td><td>50mm</td></tr></table>
+      <p>Works great. <a href="javascript:alert(1)">bad link</a> <a href="https://example.com">ok link</a></p>
+      <script>alert("x")</script>
+      <iframe src="https://evil.example"></iframe>
+      <img src="https://i.ebayimg.com/images/g/DESCIMG/s-l500.jpg" onerror="x()" />
+    </div>
+  </body>
+</html>

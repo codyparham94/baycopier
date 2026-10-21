@@ -1,0 +1,76 @@
+{
+  "manifest_version": 3,
+  "name": "BayCopier",
+  "version": "0.1.0",
+  "description": "Copy an eBay sold listing's description and photos into a new listing via \"Sell one like this\".",
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "permissions": ["storage", "downloads"],
+  "host_permissions": [
+    "*://*.ebay.com/*",
+    "*://*.ebay.co.uk/*",
+    "*://*.ebay.ca/*",
+    "*://*.ebay.com.au/*",
+    "*://*.ebaydesc.com/*",
+    "*://i.ebayimg.com/*",
+    "https://api.ebay.com/*"
+  ],
+  "background": {
+    "scripts": ["lib/common.js", "lib/item-page.js", "lib/ebay-api.js", "background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.ebay.com/itm/*",
+        "*://www.ebay.co.uk/itm/*",
+        "*://www.ebay.ca/itm/*",
+        "*://www.ebay.com.au/itm/*"
+      ],
+      "js": ["lib/common.js", "lib/item-page.js", "content/item.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://www.ebay.com/sch/*",
+        "*://www.ebay.co.uk/sch/*",
+        "*://www.ebay.ca/sch/*",
+        "*://www.ebay.com.au/sch/*"
+      ],
+      "js": ["lib/common.js", "lib/search-page.js", "content/search.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://*.ebay.com/lstng*",
+        "*://*.ebay.com/sl/*",
+        "*://*.ebay.co.uk/lstng*",
+        "*://*.ebay.co.uk/sl/*",
+        "*://*.ebay.ca/lstng*",
+        "*://*.ebay.ca/sl/*",
+        "*://*.ebay.com.au/lstng*",
+        "*://*.ebay.com.au/sl/*"
+      ],
+      "js": ["lib/common.js", "lib/listing-form.js", "content/listing.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "BayCopier settings",
+    "default_icon": "icons/icon.svg"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "baycopier@codyparham94.github.io",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}

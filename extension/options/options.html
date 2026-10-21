@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>BayCopier settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>BayCopier</h1>
+
+      <section id="perm-section" hidden>
+        <h2>Site access</h2>
+        <p>BayCopier needs access to eBay to read sold listings and fill in the listing form.</p>
+        <button id="grant" type="button">Grant access to eBay</button>
+      </section>
+
+      <section>
+        <h2>eBay API keys <span class="optional">optional</span></h2>
+        <p>
+          From your <a href="https://developer.ebay.com/my/keys" target="_blank" rel="noopener">eBay developer keyset</a>
+          (Production). With keys set, BayCopier asks eBay's Browse API for the description and photos first. eBay's API
+          only returns listings that are still live, so sold listings are read from the page either way.
+        </p>
+        <form id="api-form">
+          <label>App ID (Client ID)<input id="clientId" autocomplete="off" spellcheck="false" /></label>
+          <label>Cert ID (Client Secret)<input id="clientSecret" type="password" autocomplete="off" spellcheck="false" /></label>
+          <div class="row">
+            <button type="submit">Save</button>
+            <button id="test" type="button" class="secondary">Test connection</button>
+            <button id="clear" type="button" class="secondary">Remove keys</button>
+          </div>
+          <p id="status" role="status"></p>
+        </form>
+        <p class="note">Keys are stored only in this Firefox profile and sent only to api.ebay.com.</p>
+      </section>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>
