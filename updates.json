@@ -1,7 +1,18 @@
 {
   "addons": {
     "baycopier@codyparham94.github.io": {
-      "updates": []
+      "updates": [
+        {
+          "version": "0.3.0",
+          "update_link": "https://github.com/codyparham94/baycopier/releases/download/v0.3.0/baycopier-v0.3.0.xpi",
+          "update_hash": "sha256:e46c2b5b9853719a23150a0a3e0f4816eeddb8022f754437fc78fa169f1567e7",
+          "applications": {
+            "gecko": {
+              "strict_min_version": "142.0"
+            }
+          }
+        }
+      ]
     }
   }
 }
