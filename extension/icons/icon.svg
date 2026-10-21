@@ -1,5 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
-  <rect x="30" y="10" width="54" height="64" rx="10" fill="#3665f3"/>
-  <rect x="12" y="24" width="54" height="64" rx="10" fill="#fff" stroke="#3665f3" stroke-width="6"/>
-  <path d="M26 44h26M26 56h26M26 68h16" stroke="#3665f3" stroke-width="6" stroke-linecap="round"/>
+  <!-- A lowercase "e" and its copy, offset behind it. -->
+  <defs>
+    <path id="e" d="M-16 0H16A16 16 0 1 0 12.3 10.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </defs>
+  <!-- the copy -->
+  <use href="#e" transform="translate(62 61) rotate(-8)" stroke="#3665f3" stroke-width="11"/>
+  <!-- knockout gap so the original sits on top of the copy -->
+  <use href="#e" transform="translate(35 36) rotate(-8)" stroke="#fff" stroke-width="18"/>
+  <!-- the original -->
+  <use href="#e" transform="translate(35 36) rotate(-8)" stroke="#e53238" stroke-width="11"/>
 </svg>

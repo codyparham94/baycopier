@@ -2,8 +2,15 @@ const $ = (id) => document.getElementById(id);
 const status = $("status");
 
 function show(text, kind) {
-  status.textContent = text;
   status.className = kind || "";
+  status.textContent = text;
+  void status.offsetWidth; // restart the entrance transition for each message
+  status.classList.add("show");
+}
+
+function setBusy(btn, busy) {
+  btn.disabled = busy;
+  btn.classList.toggle("busy", busy);
 }
 
 function readForm() {
@@ -35,7 +42,7 @@ $("api-form").addEventListener("submit", async (e) => {
 $("test").addEventListener("click", async () => {
   const creds = readForm();
   if (!creds.clientId || !creds.clientSecret) return show("Enter both the App ID and the Cert ID.", "err");
-  $("test").disabled = true;
+  setBusy($("test"), true);
   show("Testing…");
   try {
     await browser.runtime.sendMessage({ type: "testApi", ...creds });
@@ -43,7 +50,7 @@ $("test").addEventListener("click", async () => {
   } catch (err) {
     show(`eBay rejected the keys: ${err.message}`, "err");
   } finally {
-    $("test").disabled = false;
+    setBusy($("test"), false);
   }
 });
 
@@ -60,6 +67,7 @@ function renderUpdate(info) {
   const text = $("update-text");
   const newer = info && info.newer && info.current === current;
   $("updates").classList.toggle("available", !!newer);
+  $("update-badge").hidden = !newer;
   $("download").hidden = !newer;
   $("update-help").hidden = !newer;
   if (newer) {
@@ -71,7 +79,7 @@ function renderUpdate(info) {
 }
 
 $("check").addEventListener("click", async () => {
-  $("check").disabled = true;
+  setBusy($("check"), true);
   try {
     const info = await browser.runtime.sendMessage({ type: "checkUpdates" });
     if (info) renderUpdate(info);
@@ -79,7 +87,7 @@ $("check").addEventListener("click", async () => {
   } catch (err) {
     $("update-text").textContent = `Couldn't reach GitHub: ${err.message}`;
   } finally {
-    $("check").disabled = false;
+    setBusy($("check"), false);
   }
 });
 
