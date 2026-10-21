@@ -11,6 +11,16 @@
               "strict_min_version": "142.0"
             }
           }
+        },
+        {
+          "version": "0.4.0",
+          "update_link": "https://github.com/codyparham94/baycopier/releases/download/v0.4.0/baycopier-v0.4.0.xpi",
+          "update_hash": "sha256:1bad6cea243616ade9c48f175e4ee7e98cbbeee730d2936eaab57b42271c3698",
+          "applications": {
+            "gecko": {
+              "strict_min_version": "142.0"
+            }
+          }
         }
       ]
     }
