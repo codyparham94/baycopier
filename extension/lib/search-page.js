@@ -25,5 +25,18 @@
     return out;
   };
 
+  const text = (el) => (el ? el.textContent.replace(/\s+/g, " ").trim() : "");
+
+  // Title / price / thumbnail of a result card, for the cart summary.
+  BC.summarizeResult = function (result) {
+    const el = result.el;
+    const titleEl = el.querySelector(".s-item__title, .s-card__title, [role='heading']");
+    const title = text(titleEl).replace(/^New Listing\s*/i, "") || `Item ${result.itemId}`;
+    const price = text(el.querySelector(".s-item__price, .s-card__price"));
+    const img = el.querySelector("img");
+    const image = img && (img.getAttribute("src") || img.getAttribute("data-src") || "");
+    return { itemId: result.itemId, url: result.url, title, price, image: /^https?:/.test(image) ? image : "" };
+  };
+
   if (typeof module !== "undefined" && module.exports) module.exports = BC;
 })(typeof globalThis !== "undefined" ? globalThis : this);

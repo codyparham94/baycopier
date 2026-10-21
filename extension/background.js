@@ -48,9 +48,27 @@ async function buildJob(info) {
 
   job.descriptionHtml = BC.sanitizeDescription(job.descriptionHtml);
   job.photoUrls = BC.uniquePhotoUrls(job.photoUrls);
-  await browser.storage.local.set({ job });
   return job;
 }
+
+// Copy jobs are kept per tab so several listing forms can fill at once.
+async function loadJobs() {
+  const { jobs = {} } = await browser.storage.local.get("jobs");
+  for (const [tabId, job] of Object.entries(jobs)) {
+    if (Date.now() - job.createdAt > BC.JOB_TTL_MS) delete jobs[tabId];
+  }
+  return jobs;
+}
+
+async function storeJob(tabId, job) {
+  const jobs = await loadJobs();
+  if (!job && !jobs[tabId]) return;
+  if (job) jobs[tabId] = job;
+  else delete jobs[tabId];
+  await browser.storage.local.set({ jobs });
+}
+
+const jobSummary = (job) => ({ photos: job.photoUrls.length, description: !!job.descriptionHtml, notes: job.notes });
 
 async function fetchPhotos(urls) {
   return Promise.all(
@@ -67,26 +85,37 @@ async function fetchPhotos(urls) {
 }
 
 const handlers = {
-  async prepareJob({ info }) {
+  // Item page: the job belongs to the tab that clicked "Sell one like this".
+  async prepareJob({ info }, sender) {
     const job = await buildJob(info);
-    return { photos: job.photoUrls.length, description: !!job.descriptionHtml, notes: job.notes };
+    await storeJob(sender.tab.id, job);
+    return jobSummary(job);
   },
 
-  async copyFromSearch({ url }) {
+  // Search results (single or batch): fetch the item page, then open the
+  // listing form in a new tab whose job is stored before it starts loading.
+  async copyFromSearch({ url, active = true }, sender) {
     const info = BC.parseItemPage(parseHtml(await fetchText(url)), url);
     const job = await buildJob(info);
-    await browser.tabs.create({ url: info.sellLikeUrl });
-    return { photos: job.photoUrls.length, description: !!job.descriptionHtml, notes: job.notes };
+    const tab = await browser.tabs.create({ url: "about:blank", active, openerTabId: sender.tab.id, index: sender.tab.index + 1 });
+    await storeJob(tab.id, job);
+    await browser.tabs.update(tab.id, { url: info.sellLikeUrl });
+    return jobSummary(job);
   },
 
-  async getJob() {
-    const { job } = await browser.storage.local.get("job");
-    return job && Date.now() - job.createdAt < BC.JOB_TTL_MS ? job : null;
+  // A tab's own job, or its opener's if eBay opened the form in a new tab.
+  async getJob(_msg, sender) {
+    const jobs = await loadJobs();
+    const own = jobs[sender.tab.id];
+    if (own) return own;
+    const opener = sender.tab.openerTabId != null && jobs[sender.tab.openerTabId];
+    if (!opener) return null;
+    await storeJob(sender.tab.openerTabId, null);
+    await storeJob(sender.tab.id, opener);
+    return opener;
   },
 
-  async clearJob() {
-    await browser.storage.local.remove("job");
-  },
+  clearJob: (_msg, sender) => storeJob(sender.tab.id, null),
 
   fetchPhotos: ({ urls }) => fetchPhotos(urls),
 
@@ -101,10 +130,12 @@ const handlers = {
   checkUpdates: () => BC.Updates.check(),
 };
 
-browser.runtime.onMessage.addListener((msg) => {
+browser.runtime.onMessage.addListener((msg, sender) => {
   const handler = handlers[msg && msg.type];
-  return handler ? handler(msg) : undefined;
+  return handler ? handler(msg, sender) : undefined;
 });
+
+browser.tabs.onRemoved.addListener((tabId) => storeJob(tabId, null));
 
 browser.action.onClicked.addListener(() => browser.runtime.openOptionsPage());
 

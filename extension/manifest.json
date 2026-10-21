@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BayCopier",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Copy an eBay sold listing's description and photos into a new listing via \"Sell one like this\".",
   "icons": {
     "48": "icons/icon.svg",
@@ -39,7 +39,7 @@
         "*://www.ebay.ca/sch/*",
         "*://www.ebay.com.au/sch/*"
       ],
-      "js": ["lib/common.js", "lib/search-page.js", "content/search.js"],
+      "js": ["lib/common.js", "lib/search-page.js", "lib/cart.js", "content/cart-panel.js", "content/search.js"],
       "run_at": "document_idle"
     },
     {

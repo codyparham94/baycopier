@@ -59,6 +59,14 @@ eBay continue to its listing form.
 Each result gets a **Copy with BayCopier** button that opens the pre-filled
 listing form in a new tab without leaving your search.
 
+**Copy several at once:** on sold search results, click the green **+** next
+to **Copy with BayCopier** to add an item to the copy cart (it turns into a ✓;
+click again to remove). The cart sits in the top-right corner of every eBay
+search tab with a thumbnail, title and price per item. **Copy all** opens each
+listing form in its own background tab, one after another, with a ✓ or the
+error per item. Copied items leave the cart; failed ones stay so you can retry.
+Copying more than 10 at once asks first.
+
 On the listing form a BayCopier box in the top-right corner reports what was
 copied. If photos couldn't be added automatically, it shows a
 **Download photos** button that saves them to `Downloads/baycopier/<item id>/`
