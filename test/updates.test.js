@@ -26,6 +26,20 @@ test("updateInfoFromRelease prefers the zip asset", () => {
   assert.equal(info.downloadUrl, "https://x/baycopier-v0.3.0.zip");
 });
 
+test("updateInfoFromRelease prefers the signed xpi over the zip", () => {
+  const info = BC.updateInfoFromRelease(
+    {
+      tag_name: "v0.4.0",
+      assets: [
+        { name: "baycopier-v0.4.0.zip", browser_download_url: "https://x/a.zip" },
+        { name: "baycopier-v0.4.0.xpi", browser_download_url: "https://x/a.xpi" },
+      ],
+    },
+    "0.3.0"
+  );
+  assert.equal(info.downloadUrl, "https://x/a.xpi");
+});
+
 test("updateInfoFromRelease is not newer for the same or older tag", () => {
   assert.equal(BC.updateInfoFromRelease({ tag_name: "v0.2.0", assets: [] }, "0.2.0").newer, false);
   assert.equal(BC.updateInfoFromRelease({ tag_name: "v0.1.0", html_url: "p", assets: [] }, "0.2.0").newer, false);

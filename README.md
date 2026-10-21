@@ -22,26 +22,29 @@ Supported sites: ebay.com, ebay.co.uk, ebay.ca, ebay.com.au.
 
 ## Install
 
-1. Download `baycopier-vX.Y.Z.zip` from the
+1. Download `baycopier-vX.Y.Z.xpi` from the
    [latest release](https://github.com/codyparham94/baycopier/releases/latest).
-2. In Firefox, open `about:debugging#/runtime/this-firefox`.
-3. Click **Load Temporary Add-on…** and pick the downloaded `.zip`.
-   (From a clone of the repo, pick `extension/manifest.json` instead.)
+   It is signed by Mozilla (unlisted, so it isn't on the add-ons store).
+2. In Firefox, open `about:addons`, click the gear icon and choose
+   **Install Add-on From File…**, then pick the `.xpi`.
 
-Temporary add-ons are removed when Firefox restarts; repeat step 3 after a
-restart. Requires Firefox 142 or newer.
+It stays installed across restarts. Requires Firefox 142 or newer.
+
+For development, load `extension/manifest.json` with **Load Temporary
+Add-on…** in `about:debugging#/runtime/this-firefox` instead. That copy is
+removed when Firefox restarts.
 
 ## Updates
 
-BayCopier checks this repo's latest GitHub release when Firefox starts and
-every 12 hours. When a newer version is out, the toolbar icon shows **NEW**,
-Firefox shows a notification once, and the settings page has a **Download**
-button and a **Check now** button.
+Signed installs **update themselves**. Firefox checks
+[`updates.json`](updates.json) (the manifest's `update_url`) about once a day
+and installs new versions in the background. To update right away:
+`about:addons` → gear → **Check for Updates**.
 
-Firefox can't swap out a temporarily loaded add-on by itself, so to update:
-download the new `.zip` and **Load Temporary Add-on…** with it. It has the
-same add-on ID, so it replaces the loaded version. Don't click **Remove**
-first; removing an add-on can erase its saved settings.
+BayCopier also checks the latest GitHub release when Firefox starts and every
+12 hours. When a newer version is out, the toolbar icon shows **NEW**, Firefox
+shows a notification once, and the settings page offers a **Download** link.
+This also covers temporary installs, which Firefox never updates.
 
 If BayCopier's settings page shows **Grant access to eBay**, click it. Firefox
 asks for site access once.
@@ -119,10 +122,27 @@ npm start      # launch a fresh Firefox with the extension loaded
    git tag v0.3.0 && git push origin main v0.3.0
    ```
 
-The [Release workflow](.github/workflows/release.yml) runs the tests and lint,
-builds `baycopier-v0.3.0.zip` and publishes it as a GitHub release, which
-installed copies then pick up. It fails if the tag doesn't match the manifest
-version.
+The [Release workflow](.github/workflows/release.yml):
+
+1. checks the tag matches the manifest version, runs the tests and lint,
+2. has Mozilla sign the extension on the unlisted channel,
+3. publishes a GitHub release with the signed `.xpi` and an unsigned `.zip`,
+4. adds the version to [`updates.json`](updates.json) on `main`, which is what
+   installed copies poll.
+
+Mozilla signs each version number only once, so every release needs a new
+version. Signing needs two repository secrets from
+[AMO → Manage API Keys](https://addons.mozilla.org/developers/addon/api/key/):
+
+```bash
+gh secret set AMO_JWT_ISSUER --repo codyparham94/baycopier
+```
+
+```bash
+gh secret set AMO_JWT_SECRET --repo codyparham94/baycopier
+```
+
+Each command prompts for the value without echoing it.
 
 The fixtures in `test/fixtures/` are hand-built to match eBay's markup. eBay
 blocks automated page fetches, so they are not captured from live pages. If

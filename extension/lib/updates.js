@@ -1,5 +1,6 @@
-// Checks GitHub Releases for a newer BayCopier. Temporarily loaded add-ons
-// can't replace themselves, so this only tells the user and links the download.
+// Checks GitHub Releases for a newer BayCopier. Signed installs also update
+// themselves through the manifest's update_url; this notice covers temporary
+// installs and the gap before Firefox's own update check runs.
 (function (root) {
   const BC = root.BayCopier || (root.BayCopier = {});
 
@@ -8,13 +9,14 @@
   // Release JSON from the GitHub API -> update info for this version.
   BC.updateInfoFromRelease = function (release, currentVersion) {
     const latest = String(release.tag_name || "").replace(/^v/i, "");
-    const zip = (release.assets || []).find((a) => /\.(zip|xpi)$/i.test(a.name));
+    const assets = release.assets || [];
+    const pkg = assets.find((a) => /\.xpi$/i.test(a.name)) || assets.find((a) => /\.zip$/i.test(a.name));
     return {
       current: currentVersion,
       latest,
       newer: !!latest && BC.compareVersions(latest, currentVersion) > 0,
       pageUrl: release.html_url,
-      downloadUrl: zip ? zip.browser_download_url : release.html_url,
+      downloadUrl: pkg ? pkg.browser_download_url : release.html_url,
       checkedAt: Date.now(),
     };
   };
