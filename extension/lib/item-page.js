@@ -19,11 +19,19 @@
 
   const IMAGE_ATTRS = ["src", "data-src", "data-zoom-src", "data-originalsrc", "srcset", "data-srcset"];
 
-  // The element the user clicks to "Sell one like this", or null.
+  // True for any "Sell one like this" control. eBay renders several per item
+  // page (some hidden until another layout shows them) and one per sold
+  // search result.
+  BC.isSellLikeElement = function (el) {
+    if (!el || !el.matches || !el.matches('a, button, [role="button"]')) return false;
+    const text = (el.textContent || "").trim();
+    return text.length < 60 && SELL_LIKE_TEXT.test(text);
+  };
+
+  // The first "Sell one like this" control on the page, or null.
   BC.findSellLikeElement = function (doc) {
-    const candidates = doc.querySelectorAll('a, button, [role="button"]');
-    for (const el of candidates) {
-      if (SELL_LIKE_TEXT.test(el.textContent || "")) return el.closest("a") || el;
+    for (const el of doc.querySelectorAll('a, button, [role="button"]')) {
+      if (BC.isSellLikeElement(el)) return el.closest("a") || el;
     }
     return null;
   };

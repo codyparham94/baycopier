@@ -2,11 +2,6 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { BC, fixture, htmlDoc } = require("./helpers");
 
-test("isSoldSearch detects the sold filter", () => {
-  assert.equal(BC.isSoldSearch("https://www.ebay.com/sch/i.html?_nkw=x&LH_Sold=1"), true);
-  assert.equal(BC.isSoldSearch("https://www.ebay.com/sch/i.html?_nkw=x"), false);
-});
-
 test("findResultItems handles both layouts and skips the placeholder", () => {
   const items = BC.findResultItems(fixture("search.html", "https://www.ebay.com/sch/i.html?LH_Sold=1"));
   assert.deepEqual(
@@ -14,8 +9,31 @@ test("findResultItems handles both layouts and skips the placeholder", () => {
     [
       ["111111111111", "https://www.ebay.com/itm/111111111111"],
       ["222222222222", "https://www.ebay.com/itm/vintage-lens/222222222222"],
+      ["377572455842", "https://www.ebay.com/itm/377572455842"],
     ]
   );
+});
+
+test("2026 sold card: sell link is not mistaken for the item link, title and price are clean", () => {
+  const items = BC.findResultItems(fixture("search.html", "https://www.ebay.com/sch/i.html?LH_Sold=1"));
+  const card = items.find((i) => i.itemId === "377572455842");
+  const sell = [...card.el.querySelectorAll("a")].find((a) => BC.isSellLikeElement(a));
+  assert.ok(sell, "card has a Sell one like this link");
+  const s = BC.summarizeResult(card);
+  assert.equal(s.title, "PAUL SKENES 2026 TOPPS X KAWS BASEBALL #44");
+  assert.equal(s.price, "$1.25");
+});
+
+test("isSellLikeElement matches every sell button but not big wrappers", () => {
+  const doc = htmlDoc(
+    '<a id="a" href="/sl/list?mode=SellLikeItem&itemId=1">Sell one like this</a>' +
+      '<button id="b">Sell one like this</button>' +
+      '<a id="c" href="/x">A long promo block that says sell one like this somewhere in a big paragraph of text</a><div id="d">Sell one like this</div>'
+  );
+  assert.equal(BC.isSellLikeElement(doc.getElementById("a")), true);
+  assert.equal(BC.isSellLikeElement(doc.getElementById("b")), true);
+  assert.equal(BC.isSellLikeElement(doc.getElementById("c")), false);
+  assert.equal(BC.isSellLikeElement(doc.getElementById("d")), false);
 });
 
 test("findPhotoInput prefers the image file input", () => {

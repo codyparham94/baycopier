@@ -51,15 +51,21 @@ asks for site access once.
 
 ## Use
 
-**From a sold item page:** open any sold or ended listing and click
-**Sell one like this**. BayCopier gathers the description and photos, then lets
-eBay continue to its listing form.
+Any listing can be copied: live, sold or ended.
 
-**From sold search results:** search eBay with the **Sold items** filter on.
-Each result gets a **Copy with BayCopier** button that opens the pre-filled
-listing form in a new tab without leaving your search.
+**From an item page:** click **Sell one like this**. BayCopier gathers the
+description and photos, then lets eBay continue to its listing form. If eBay
+shows no such button, BayCopier adds its own **Copy with BayCopier** button
+under the title.
 
-**Copy several at once:** on sold search results, click the green **+** next
+**From search results:** every result, with or without the **Sold items**
+filter, gets a **Copy with BayCopier** button that opens the pre-filled
+listing form in a new tab without leaving your search. On sold results, eBay's
+own **Sell one like this** link under each item copies too.
+
+With eBay API keys set (see below), live listings are read through eBay's API.
+
+**Copy several at once:** on search results, click the green **+** next
 to **Copy with BayCopier** to add an item to the copy cart (it turns into a ✓;
 click again to remove). The cart sits in the top-right corner of every eBay
 search tab with a thumbnail, title and price per item. **Copy all** opens each
@@ -102,7 +108,7 @@ item page ──click "Sell one like this"──▶ background: fetch descriptio
 |------|------|
 | `extension/lib/common.js` | Sites, item-ID and photo-URL helpers, HTML sanitizer |
 | `extension/lib/item-page.js` | Reads photos, description URL and the sell-like link from an item page |
-| `extension/lib/search-page.js` | Finds results on sold search pages |
+| `extension/lib/search-page.js` | Finds results on search pages |
 | `extension/lib/listing-form.js` | Finds and fills the listing form's description editor and photo uploader |
 | `extension/lib/ebay-api.js` | Optional Browse API client |
 | `extension/background.js` | Cross-site fetching, copy storage, downloads |

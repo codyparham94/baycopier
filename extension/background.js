@@ -92,6 +92,15 @@ const handlers = {
     return jobSummary(job);
   },
 
+  // Search card "Sell one like this": the job belongs to the clicking tab,
+  // which then follows eBay's own link.
+  async prepareFromItemUrl({ url }, sender) {
+    const info = BC.parseItemPage(parseHtml(await fetchText(url)), url);
+    const job = await buildJob(info);
+    await storeJob(sender.tab.id, job);
+    return jobSummary(job);
+  },
+
   // Search results (single or batch): fetch the item page, then open the
   // listing form in a new tab whose job is stored before it starts loading.
   async copyFromSearch({ url, active = true }, sender) {

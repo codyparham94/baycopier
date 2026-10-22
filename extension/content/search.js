@@ -1,10 +1,11 @@
-// Sold search results: adds "Copy with BayCopier" and a green + (add to the
-// copy cart) to each result.
+// Search results (live and sold): adds "Copy with BayCopier" and a green +
+// (add to the copy cart) to each result, and makes eBay's per-card
+// "Sell one like this" links copy too.
 (() => {
   const BC = globalThis.BayCopier;
-  if (!BC.isSoldSearch(location.href)) return;
 
   const MARK = "baycopierDone";
+  const PASS = "baycopierPassed";
   const SPRING =
     "linear(0, 0.0456, 0.1525, 0.2866, 0.4256, 0.5556, 0.6696, 0.7646, 0.8403, 0.8983, 0.9411, 0.9713, 0.9915, 1.0041, 1.0112, 1.0144, 1.0152, 1.0143, 1.0126, 1.0105, 1.0084, 1.0065, 1.0048, 1.0034, 1.0023, 1.0014, 1.0008, 1.0004, 1.0001, 0.9999, 1)";
 
@@ -113,6 +114,30 @@
       anchor.appendChild(row);
     }
   }
+
+  // Sold results carry their own "Sell one like this" link. Build the copy
+  // job for that item first, then let eBay's link continue.
+  document.addEventListener(
+    "click",
+    async (e) => {
+      const link = e.target.closest && e.target.closest("a");
+      if (!BC.isSellLikeElement(link) || link.dataset[PASS]) return;
+      const card = BC.findResultItems(document).find((r) => r.el.contains(link));
+      if (!card) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      link.style.opacity = "0.6";
+      link.textContent = "Copying…";
+      try {
+        await browser.runtime.sendMessage({ type: "prepareFromItemUrl", url: card.url });
+      } catch (err) {
+        console.warn("BayCopier: could not prepare copy, continuing with eBay's flow", err);
+      }
+      link.dataset[PASS] = "1";
+      link.click();
+    },
+    true
+  );
 
   BC.CartPanel.onChange((cart) => {
     for (const [itemId, btn] of addButtons) syncAddButton(btn, BC.cartHas(cart, itemId));

@@ -1,6 +1,6 @@
 {
   "name": "baycopier",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Firefox extension that copies an eBay sold listing's description and photos into a new listing.",
   "license": "MIT",
